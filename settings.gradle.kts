@@ -15,4 +15,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "OpenWeather Sample"
 include(":app")
- 
+include(":feature:forecast")
+include(":data:forecast")
+include(":domain:forecast")
+include(":data:common_remote")
+include(":data:database")
