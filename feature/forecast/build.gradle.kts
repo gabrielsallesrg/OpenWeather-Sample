@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":design"))
     implementation(project(":domain:forecast"))
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -52,6 +53,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-android-compiler:2.48.1")

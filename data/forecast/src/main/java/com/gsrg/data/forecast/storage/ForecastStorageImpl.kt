@@ -6,11 +6,12 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ForecastStorageImpl @Inject constructor(
-    private val dao: com.gsrg.data.database.forecast.dao.ForecastDao,
+    private val dao: ForecastDao,
 ): ForecastStorage {
-    override suspend fun insertUpdateForecastList(forecastList: List<com.gsrg.data.database.forecast.entity.ForecastEntity>) {
+    override suspend fun insertUpdateForecastList(forecastList: List<ForecastEntity>) {
+        dao.deleteAllForecast()
         dao.insertUpdateForecastList(forecastList = forecastList)
     }
 
-    override fun getForecastList(): Flow<List<com.gsrg.data.database.forecast.entity.ForecastEntity>> = dao.getForecastList()
+    override fun getForecastList(): Flow<List<ForecastEntity>> = dao.getForecastList()
 }

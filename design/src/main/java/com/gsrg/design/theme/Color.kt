@@ -1,4 +1,4 @@
-package com.gsrg.openweather.ui.theme
+package com.gsrg.design.theme
 
 import androidx.compose.ui.graphics.Color
 

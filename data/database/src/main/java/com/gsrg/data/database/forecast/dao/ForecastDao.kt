@@ -13,6 +13,9 @@ interface ForecastDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUpdateForecastList(forecastList: List<ForecastEntity>)
 
+    @Query("DELETE FROM forecast")
+    suspend fun deleteAllForecast()
+
     @Query("SELECT * FROM forecast")
     fun getForecastList(): Flow<List<ForecastEntity>>
 }

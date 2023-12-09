@@ -1,4 +1,4 @@
-package com.gsrg.openweather.ui.theme
+package com.gsrg.design.theme
 
 import android.app.Activity
 import android.os.Build
