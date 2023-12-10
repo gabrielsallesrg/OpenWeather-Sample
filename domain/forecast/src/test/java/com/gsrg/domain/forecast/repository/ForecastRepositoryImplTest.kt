@@ -1,20 +1,25 @@
 package com.gsrg.domain.forecast.repository
 
+import android.util.Log
 import com.gsrg.data.database.forecast.entity.ForecastEntity
 import com.gsrg.data.forecast.remote.ForecastRemote
 import com.gsrg.data.forecast.remote.dto.ForecastDto
 import com.gsrg.data.forecast.remote.dto.TemperatureDto
 import com.gsrg.data.forecast.storage.ForecastStorage
 import com.gsrg.domain.forecast.helper.Converter
+import com.gsrg.domain.forecast.helper.RequestResult
 import com.gsrg.domain.forecast.model.Forecast
 import com.gsrg.helper.test.RandomData
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -94,6 +99,22 @@ class ForecastRepositoryImplTest {
     }
 
     @Test
+    fun `if requesting from remote gets exception, repository should return error`() = runBlocking {
+        val lat = RandomData.double()
+        val lon = RandomData.double()
+        val apiKey = RandomData.string()
+
+        val exception = RequestException()
+
+        coEvery { mockRemote.getForecast(lat = lat, lon = lon, apiKey = apiKey) } throws exception
+
+        val result = sut.requestForecast(lat = lat, lon = lon, apiKey = apiKey)
+
+        assertTrue(result is RequestResult.Error)
+        assertEquals(exception, (result as RequestResult.Error).exception)
+    }
+
+    @Test
     fun `getting forecastList should get from storage and be mapped`() = runBlocking {
         val offsetDateTime_00 = RandomData.offsetDateTime()
         val temp_00 = RandomData.float()
@@ -144,5 +165,9 @@ class ForecastRepositoryImplTest {
 
     private fun generalMocks() {
         coEvery { mockStorage.insertUpdateForecastList(forecastList = any()) } returns Unit
+        mockkStatic(Log::class)
+        every { Log.e(any(), any()) } returns 0
     }
+
+    private class RequestException: Exception()
 }

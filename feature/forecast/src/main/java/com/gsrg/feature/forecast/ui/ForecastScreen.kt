@@ -33,6 +33,7 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.gsrg.domain.forecast.helper.RequestResult
 import com.gsrg.domain.forecast.model.Forecast
 import com.gsrg.feature.forecast.ui.component.CurrentDay
 import com.gsrg.feature.forecast.ui.component.ForecastDayItem
@@ -45,11 +46,15 @@ import kotlin.random.Random
 fun ForecastScreenEntry() {
     val viewModel: ForecastViewModel = viewModel()
     val forecastList by viewModel.getForecast().collectAsState(initial = emptyList())
+    val requestStatus by viewModel.requestStatus().collectAsState(initial = null)
 
     val locationPermissionState = rememberPermissionState(permission = Manifest.permission.ACCESS_COARSE_LOCATION)
 
     if (locationPermissionState.status.isGranted) {
-        ForecastScreen(forecastList = forecastList)
+        ForecastScreen(
+            forecastList = forecastList,
+            requestError = requestStatus is RequestResult.Error,
+        )
     } else {
         RequestLocationPermission(permissionState = locationPermissionState)
     }
@@ -81,7 +86,10 @@ private fun RequestLocationPermission(
 }
 
 @Composable
-private fun ForecastScreen(forecastList: List<Pair<Int, List<Forecast>>>) {
+private fun ForecastScreen(
+    forecastList: List<Pair<Int, List<Forecast>>>,
+    requestError: Boolean,
+) {
     val todayForecast = forecastList.firstOrNull()
     val futureForecast = forecastList.toMutableList()
     futureForecast.remove(todayForecast)
@@ -91,6 +99,11 @@ private fun ForecastScreen(forecastList: List<Pair<Int, List<Forecast>>>) {
         modifier = Modifier.fillMaxSize(),
         state = lazyListState,
     ) {
+        if (requestError) {
+            item {
+                Text(text = "Something is wrong. Please check your internet connection and reopen the app")
+            }
+        }
         item {
             CurrentDay(forecastList = todayForecast?.second ?: emptyList())
         }
@@ -122,6 +135,7 @@ private fun ForecastScreenPreview() {
     }
 
     ForecastScreen(
-        forecastList = forecastList
+        forecastList = forecastList,
+        requestError = true,
     )
 }

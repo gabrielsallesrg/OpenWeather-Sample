@@ -3,6 +3,7 @@ package com.gsrg.feature.forecast.ui
 import android.location.Location
 import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.gsrg.domain.forecast.helper.RequestResult
 import com.gsrg.domain.forecast.model.Forecast
 import com.gsrg.domain.forecast.repository.ForecastRepository
 import com.gsrg.feature.forecast.ForecastApiKeyProvider
@@ -135,7 +136,7 @@ class ForecastViewModelTest {
     }
 
     private fun generalMocks() {
-        coEvery { mockkRepository.requestForecast(lat = any(), lon = any(), apiKey = any()) } returns Unit
+        coEvery { mockkRepository.requestForecast(lat = any(), lon = any(), apiKey = any()) } returns RequestResult.Success(true)
         coEvery { mockkLocationService.locationFlow() } returns flowOf(null)
         every { mockkForecastApiKeyProvider.apiKey() } returns apiKey
     }

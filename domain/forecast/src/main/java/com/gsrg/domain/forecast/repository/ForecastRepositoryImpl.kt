@@ -1,9 +1,11 @@
 package com.gsrg.domain.forecast.repository
 
+import android.util.Log
 import com.gsrg.data.database.forecast.entity.ForecastEntity
 import com.gsrg.data.forecast.remote.ForecastRemote
 import com.gsrg.data.forecast.storage.ForecastStorage
 import com.gsrg.domain.forecast.helper.Converter
+import com.gsrg.domain.forecast.helper.RequestResult
 import com.gsrg.domain.forecast.model.Forecast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,17 +16,23 @@ class ForecastRepositoryImpl @Inject constructor(
     private val converter: Converter,
 ) : ForecastRepository {
 
-    override suspend fun requestForecast(lat: Double, lon: Double, apiKey: String) {
-        val forecastDtoList = remote.getForecast(lat = lat, lon = lon, apiKey = apiKey)
-        val forecastEntityList = forecastDtoList.map {
-            ForecastEntity(
-                offsetDateTime = converter.run { it.dateTimeUtc.toCurrentTimeZone() },
-                temp = it.temperatureDto.temp,
-                tempMin = it.temperatureDto.tempMin,
-                tempMax = it.temperatureDto.tempMax,
-            )
+    override suspend fun requestForecast(lat: Double, lon: Double, apiKey: String): RequestResult<Any> {
+        return try {
+            val forecastDtoList = remote.getForecast(lat = lat, lon = lon, apiKey = apiKey)
+            val forecastEntityList = forecastDtoList.map {
+                ForecastEntity(
+                    offsetDateTime = converter.run { it.dateTimeUtc.toCurrentTimeZone() },
+                    temp = it.temperatureDto.temp,
+                    tempMin = it.temperatureDto.tempMin,
+                    tempMax = it.temperatureDto.tempMax,
+                )
+            }
+            storage.insertUpdateForecastList(forecastList = forecastEntityList)
+            RequestResult.Success(null)
+        } catch (e: Exception) {
+            Log.e(this.javaClass.simpleName, e.stackTraceToString())
+            RequestResult.Error(exception = e)
         }
-        storage.insertUpdateForecastList(forecastList = forecastEntityList)
     }
 
     override fun getForecast(): Flow<List<Forecast>> {
