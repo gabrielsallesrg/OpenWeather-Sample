@@ -2,39 +2,31 @@ package com.gsrg.feature.forecast.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.location.LocationManager
-import android.location.LocationRequest
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
-import com.google.android.gms.location.CurrentLocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.gsrg.domain.forecast.helper.RequestResult
 import com.gsrg.domain.forecast.model.Forecast
+import com.gsrg.feature.forecast.R
 import com.gsrg.feature.forecast.ui.component.CurrentDay
 import com.gsrg.feature.forecast.ui.component.ForecastDayItem
 import java.time.OffsetDateTime
@@ -71,16 +63,11 @@ private fun RequestLocationPermission(
     permissionState: PermissionState,
 ) {
     Column {
-        val textToShow = if (permissionState.status.shouldShowRationale) {
-            "Rationale permission to text" // TODO move to strings.xml
-        } else {
-            "Location is needed" // TODO move to strings.xml
-        }
-        Text(text = textToShow)
+        Text(text = stringResource(id = R.string.location_needed))
         Button(onClick = {
             permissionState.launchPermissionRequest()
         }) {
-            Text(text = "Request permission") // TODO move to strings.xml
+            Text(text = stringResource(id = R.string.request_permission))
         }
     }
 }
@@ -101,7 +88,11 @@ private fun ForecastScreen(
     ) {
         if (requestError) {
             item {
-                Text(text = "Something is wrong. Please check your internet connection and reopen the app")
+                Text(
+                    text = stringResource(id = R.string.something_went_wrong),
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
             }
         }
         item {

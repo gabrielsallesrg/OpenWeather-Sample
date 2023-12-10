@@ -1,6 +1,8 @@
 package com.gsrg.data.common.remote.adapter
 
+import android.content.Context
 import android.util.Log
+import co.infinum.retromock.Retromock
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -9,25 +11,39 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
+import com.gsrg.data.common.MockApiProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.lang.reflect.Type
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class RetrofitAdapterImpl @Inject constructor() : RetrofitAdapter {
+class RetrofitAdapterImpl @Inject constructor(
+    private val mockApiProvider: MockApiProvider,
+    private val context: Context,
+) : RetrofitAdapter {
 
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeDeserializer())
         .create()
 
-    override fun getRetrofitInterface(): Retrofit {
-        return Retrofit.Builder()
+    override fun <T> getRetrofitInterface(api: Class<T>): T {
+        val retrofitClient = Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
+
+        return if (mockApiProvider.useMockApi()) {
+            Retromock.Builder()
+                .retrofit(retrofitClient)
+                .defaultBodyFactory(context.assets::open)
+                .build()
+                .create(api)
+        } else {
+            retrofitClient.create(api)
+        }
     }
 }
 

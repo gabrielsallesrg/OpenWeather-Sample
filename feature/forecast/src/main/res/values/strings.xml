@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="format_temp">%1$s°</string>
+    <string name="something_went_wrong">Something is wrong. Please check your internet connection and reopen the app.</string>
+    <string name="location_needed">This app will not work without accessing your location</string>
+    <string name="request_permission">Request permission</string>
 </resources>

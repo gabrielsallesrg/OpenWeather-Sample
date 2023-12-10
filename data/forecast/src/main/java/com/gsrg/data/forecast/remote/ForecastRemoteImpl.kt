@@ -10,7 +10,7 @@ class ForecastRemoteImpl @Inject constructor(
 ): ForecastRemote {
 
     private val apiClient: OpenWeatherApi by lazy {
-        retrofitAdapter.getRetrofitInterface().create(OpenWeatherApi::class.java)
+        retrofitAdapter.getRetrofitInterface(api = OpenWeatherApi::class.java)
     }
 
     override suspend fun getForecast(lat: Double, lon: Double, apiKey: String): List<ForecastDto> {
