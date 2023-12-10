@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface LocationService {
 
     fun locationFlow(): Flow<Location?>
-    fun getCurrentLocation()
+    fun updateCurrentLocation()
 }

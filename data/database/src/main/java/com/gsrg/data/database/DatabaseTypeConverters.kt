@@ -14,7 +14,7 @@ class DatabaseTypeConverters {
     }
 
     @TypeConverter
-    fun fromOffsetDateTime(dateTime: OffsetDateTime?): String {
-        return dateTime.toString()
+    fun fromOffsetDateTime(dateTime: OffsetDateTime?): String? {
+        return dateTime?.toString()
     }
 }

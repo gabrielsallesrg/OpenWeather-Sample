@@ -19,8 +19,8 @@ class LocationServiceImpl @Inject constructor(
     override fun locationFlow(): Flow<Location?> = _locationFlow
 
     @SuppressLint("MissingPermission")
-    override fun getCurrentLocation() {
-        val priority = Priority.PRIORITY_BALANCED_POWER_ACCURACY
+    override fun updateCurrentLocation() {
+        val priority = Priority.PRIORITY_HIGH_ACCURACY
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationProviderClient.getCurrentLocation(priority, cancellationTokenSource.token)
             .addOnSuccessListener {

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ForecastRepository {
 
-    suspend fun requestForecast(lat: Double, lon: Double)
+    suspend fun requestForecast(lat: Double, lon: Double,  apiKey: String)
 
     fun getForecast(): Flow<List<Forecast>>
 }

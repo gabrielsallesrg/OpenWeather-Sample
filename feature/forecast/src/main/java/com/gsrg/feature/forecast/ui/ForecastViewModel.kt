@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gsrg.domain.forecast.model.Forecast
 import com.gsrg.domain.forecast.repository.ForecastRepository
+import com.gsrg.feature.forecast.ForecastApiKeyProvider
 import com.gsrg.feature.forecast.service.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -16,20 +17,21 @@ import javax.inject.Inject
 class ForecastViewModel @Inject constructor(
     private val repository: ForecastRepository,
     private val locationService: LocationService,
+    private val forecastApiKeyProvider: ForecastApiKeyProvider,
 ) : ViewModel() {
 
     init {
         viewModelScope.launch {
             locationService.locationFlow().collectLatest { location ->
                 if (location != null) {
-                    repository.requestForecast(lat = location.latitude, lon = location.longitude)
+                    repository.requestForecast(lat = location.latitude, lon = location.longitude, apiKey = forecastApiKeyProvider.apiKey())
                 }
             }
         }
     }
 
     fun requestForecast() {
-        locationService.getCurrentLocation()
+        locationService.updateCurrentLocation()
     }
 
     fun getForecast(): Flow<List<Pair<Int, List<Forecast>>>> {

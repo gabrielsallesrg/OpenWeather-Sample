@@ -67,15 +67,15 @@ private fun RequestLocationPermission(
 ) {
     Column {
         val textToShow = if (permissionState.status.shouldShowRationale) {
-            "Rationale permission to text"
+            "Rationale permission to text" // TODO move to strings.xml
         } else {
-            "Location is needed"
+            "Location is needed" // TODO move to strings.xml
         }
         Text(text = textToShow)
         Button(onClick = {
             permissionState.launchPermissionRequest()
         }) {
-            Text(text = "Request permission")
+            Text(text = "Request permission") // TODO move to strings.xml
         }
     }
 }

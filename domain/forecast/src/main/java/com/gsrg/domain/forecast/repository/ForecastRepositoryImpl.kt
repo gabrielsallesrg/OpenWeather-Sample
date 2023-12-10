@@ -8,17 +8,13 @@ import com.gsrg.domain.forecast.model.Forecast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-
 class ForecastRepositoryImpl @Inject constructor(
     private val remote: ForecastRemote,
     private val storage: ForecastStorage,
     private val converter: Converter,
 ) : ForecastRepository {
 
-    private val apiKey = "9ceeb31aeb346c6809b713d60d664d55" // TODO move to a proper place
-
-    override suspend fun requestForecast(lat: Double, lon: Double) {
-
+    override suspend fun requestForecast(lat: Double, lon: Double, apiKey: String) {
         val forecastDtoList = remote.getForecast(lat = lat, lon = lon, apiKey = apiKey)
         val forecastEntityList = forecastDtoList.map {
             ForecastEntity(
@@ -45,3 +41,4 @@ class ForecastRepositoryImpl @Inject constructor(
     }
 
 }
+
