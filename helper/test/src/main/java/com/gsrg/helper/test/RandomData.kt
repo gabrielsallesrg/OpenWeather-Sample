@@ -27,7 +27,7 @@ object RandomData {
     }
 
     /**
-     * This function was created by ChatGPT
+     * This function was mostly created by ChatGPT
      */
     fun offsetDateTime(randomOffset: Boolean = true): OffsetDateTime {
         val now = OffsetDateTime.now()
